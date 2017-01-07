@@ -58,3 +58,18 @@ Of course, this will use the data from the prior sendHighscore() call for linkin
 
 ## Feedback
 If you encounter any issues you can create a issue here on github. You can also report any issues or questions and suggestions you have to us via email to feedback@globalstats.io or via the feedback form on our website https://globalstats.io.
+
+## Credits for the GameMaker:Studio extension
+
+To "Ciberman" for his free(!) playerprefs_gm asset on the Marketplace (https://marketplace.yoyogames.com/assets/4504/playerprefs_gm)
+where I learned how to save something "automatically" while the game idles (see the step event action of oGlobalStatsIOController).
+You should check out Ciberman's Tweenline asset - it's great! https://marketplace.yoyogames.com/assets/2909/tweenline-animation-engine
+
+Once more to Ciberman and Zack Bell or the other people who came up with a solution how to implement singletons  within GameMaker:Studio.
+You can find the Ciberman implementation in his PlayerPrefs and Tweenline asset, the solution from Zack is here:
+https://zackbellgames.com/2016/11/13/loadworld-devlog-pt-2/
+
+Also I need to credit Florian van Strien for his GameJolt API (http://gamejolt.com/games/gamejolt-achievement-api-for-gamemaker-studio/11689) which
+gave me a good start on how to implement the globalstats.io binding.
+
+Thomas Haaks
