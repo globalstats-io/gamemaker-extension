@@ -30,7 +30,7 @@
 if (singleton()) {exit;}
 
 // initialize enums for the rank and highscores array
-enum RankResult { Key = 0, Name = 0, Value = 1, Sorting = 2, Rank = 3, UpdatedAt = 4, UserProfileURL = 5, UserIconURL = 6};
+enum RankResult { Name = 0, Value = 1, Sorting = 2, Rank = 3, UpdatedAt = 4, UserProfileURL = 5, UserIconURL = 6, Key = 7};
 
 
 // initialize properly with your globalstats.io auto_generated game id and secret
@@ -202,6 +202,7 @@ if (result == accessRequest) {
         valueslist = ds_map_find_value(gsResponseMap, "values");
         // this is just the entry for the score just shared
         gsLastGTDRank = 0;
+        gsLastGTDRank[RankResult.Name] = ds_map_find_value(gsResponseMap, "name");
         var map = ds_list_find_value(valueslist, 0);
         gsLastGTDRank[RankResult.Key] = ds_map_find_value(map, "key");
         gsLastGTDRank[RankResult.Value] = ds_map_find_value(map, "value");
@@ -216,6 +217,7 @@ if (result == accessRequest) {
         // retrieve high score values
         valueslist = ds_map_find_value(gsResponseMap, "values");
         gsLastGTDRank = 0;
+        gsLastGTDRank[RankResult.Name] = ds_map_find_value(gsResponseMap, "name");
         var map = ds_list_find_value(valueslist, 0);
         gsLastGTDRank[RankResult.Key] = ds_map_find_value(map, "key");
         gsLastGTDRank[RankResult.Value] = ds_map_find_value(map, "value");
@@ -230,6 +232,7 @@ if (result == accessRequest) {
         // retrieve current rank of player
         valueslist = ds_map_find_value(gsResponseMap, "statistics");
         gsRank = 0;
+        gsRank[RankResult.Name] = ds_map_find_value(gsResponseMap, "name");
         var map = ds_list_find_value(valueslist, 0);
         gsRank[RankResult.Key] = ds_map_find_value(map, "key");
         gsRank[RankResult.Value] = ds_map_find_value(map, "value");

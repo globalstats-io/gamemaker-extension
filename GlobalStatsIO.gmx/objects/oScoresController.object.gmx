@@ -174,12 +174,13 @@ var i;
 if (oGlobalStatsIOController.gsRank == 0) {
     draw_text(xx, yy, "Retrieving rank information...");
 } else {
-    var rank, lastscore, lasttime;
+    var name, rank, lastscore, lasttime;
     // best score for current player
+    name = oGlobalStatsIOController.gsRank[RankResult.Name];
     rank = oGlobalStatsIOController.gsRank[RankResult.Rank];
     lastscore = oGlobalStatsIOController.gsRank[RankResult.Value];
     lasttime = oGlobalStatsIOController.gsRank[RankResult.UpdatedAt];
-    draw_text(xx, yy, oGlobalStatsIOController.playerNickname + ", your best score is " + string(rank) + ". place with a score of " + string(lastscore) + " at " + string(lasttime));
+    draw_text(xx, yy, string(name) + ", your best score is " + string(rank) + ". place with a score of " + string(lastscore) + " at " + string(lasttime));
 }
 
 // highscores
