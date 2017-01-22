@@ -27,6 +27,7 @@
             <kind>1</kind>
             <string>/// just jump to the start/title room
 
+draw_set_font(fontNormal);
 // initialize the random number generator
 randomize();
 

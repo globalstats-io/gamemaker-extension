@@ -27,6 +27,8 @@
             <kind>1</kind>
             <string>// first check if we have a last player setting
 
+show_debug_message("oStartController: Create event action is called!");
+
 global.CurrentPlayer = gs_getSetting("currentPlayer", "Anonymous");
 
 PlayerNameInputBox.text = global.CurrentPlayer;
@@ -60,10 +62,10 @@ if (!is_undefined(gs_getSetting(global.CurrentPlayer))) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>draw_set_color(c_white);
+            <string>draw_set_font(fontBig);
+draw_set_color(c_white);
 draw_set_halign(fa_center);
 draw_set_valign(fa_middle);
-draw_set_font(fontBig);
 draw_text(room_width / 2, 100, "globalstats.io Test game");
 draw_text(room_width / 2, 180, "for GameMaker:Studio");
 

@@ -6,7 +6,7 @@ var filename = argument0;
 var settings = argument1;
 
 if (settingsChanged) {
-	show_debug_message("gs_saveSettings(): settings changed, saving them to file");
+show_debug_message("gs_saveSettings(): settings changed, saving them to file");
     ds_map_secure_save(settings, filename);
     settingsChanged = false;
 }
