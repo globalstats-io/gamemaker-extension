@@ -28,7 +28,7 @@
             <string>///modify triggerAlarmDelay to your needs in child button create event
 triggerAlarmDelay = 5;
 text = "SimpleTextButton";
-font = -1;  // the default font
+font = fontNormal;  // the default font
 textscale = 1;
 </string>
           </argument>
