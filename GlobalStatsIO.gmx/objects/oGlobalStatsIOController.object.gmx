@@ -56,6 +56,7 @@ if (is_undefined(playerID))
 accessRequest = -1;// retrieve a new access token
 shareRequest = -1;// share a score
 rankRequest = -1;// request the current rank of current player
+rankSectionRequest = -1;// request the current rank of current player and the closest 5 better and worse ranks of other players
 scoresRequest = -1;// request a given number of highscores
 shareFirstTimeRequest = -1;// share a score for the first time, get a player id back!
 linkRequest = -1;// connect your local player account with a globalstats.io account
@@ -72,6 +73,13 @@ gsLastError = noone;// string of JSON error message
 gsLastGTDRank = 0;// an array containing your current rank results for your latest uploaded score
 // highscore results are stored in here
 gsRank = 0;// an array containing your current rank results
+
+// additional arrays for rank section with better and worse players. Player's rank is stored in gsRank, declared above
+gsWorseRanks = 0;
+gsWorseRanksSize = 0;
+gsBetterRanks = 0;
+gsBetterRanksSize = 0;
+
 // highscore results are stored in here
 gsHighscores = 0;// a two dimensional array for the highscore table, similar to gsRank array but for all requested entries
 gsHighscoresSize = 0;   // nr of entries in the highscore array
@@ -241,6 +249,52 @@ if (result == accessRequest) {
         gsRank[RankResult.UpdatedAt] = ds_map_find_value(map, "updated_at");
     }
     rankRequest = -1;
+} else if (result == rankSectionRequest) {
+    if (gs_getResultStatus()) {
+        // request successful.
+        // first retrieve rank of current player
+        var map;
+        map = ds_map_find_value(gsResponseMap, "user_rank");
+        gsRank = 0;
+        gsRank[RankResult.Name] = ds_map_find_value(map, "name");
+        gsRank[RankResult.Rank] = ds_map_find_value(map, "rank");
+        gsRank[RankResult.Value] = ds_map_find_value(map, "value");
+        gsRank[RankResult.UserProfileURL] = ds_map_find_value(map, "user_profile");
+        gsRank[RankResult.UserIconURL] = ds_map_find_value(map, "user_icon");
+        // next retrieve list of better players
+        map = ds_map_find_value(gsResponseMap, "better_ranks");
+        valueslist = ds_map_find_value(map, "data");
+        // this is the list with all better scores
+        // store it in the gsBetterRanks array
+        gsBetterRanks = 0;
+        entries = ds_list_size(valueslist);
+        gsBetterRanksSize = entries;
+        for (i = 0; i &lt; entries; i++) {
+            var entrymap = ds_list_find_value(valueslist, i);
+            gsBetterRanks[i, RankResult.Name] = ds_map_find_value(entrymap, "name");
+            gsBetterRanks[i, RankResult.Rank] = ds_map_find_value(entrymap, "rank");
+            gsBetterRanks[i, RankResult.Value] = ds_map_find_value(entrymap, "value");
+            gsBetterRanks[i, RankResult.UserProfileURL] = ds_map_find_value(entrymap, "user_profile");
+            gsBetterRanks[i, RankResult.UserIconURL] = ds_map_find_value(entrymap, "user_icon");
+        }
+        // finally retrieve list of worse players
+        map = ds_map_find_value(gsResponseMap, "worse_ranks");
+        valueslist = ds_map_find_value(map, "data");
+        // this is the list with all worse scores
+        // store it in the gsWorseRanks array
+        gsWorseRanks = 0;
+        entries = ds_list_size(valueslist);
+        gsWorseRanksSize = entries;
+        for (i = 0; i &lt; entries; i++) {
+            var entrymap = ds_list_find_value(valueslist, i);
+            gsWorseRanks[i, RankResult.Name] = ds_map_find_value(entrymap, "name");
+            gsWorseRanks[i, RankResult.Rank] = ds_map_find_value(entrymap, "rank");
+            gsWorseRanks[i, RankResult.Value] = ds_map_find_value(entrymap, "value");
+            gsWorseRanks[i, RankResult.UserProfileURL] = ds_map_find_value(entrymap, "user_profile");
+            gsWorseRanks[i, RankResult.UserIconURL] = ds_map_find_value(entrymap, "user_icon");
+        }
+    }
+    rankSectionRequest = -1;
 } else if (result == scoresRequest) {
     if (gs_getResultStatus()) {
         // request successful.

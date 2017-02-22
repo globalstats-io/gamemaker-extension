@@ -1,5 +1,5 @@
 /// @description Returns: true if the function is completed, false if there is an globalstats.io error, <0 if there is a GameMaker error (for example, if GM couldn't find the site).
-//If returns 0, more info will be available when you call gs_error()
+//If returns false, more info will be available when you call gs_error()
 //Returns the status and makes the info available, so ALWAYS call this before you request any info.
 var httpstatus=ds_map_find_value(async_load,"status");
 

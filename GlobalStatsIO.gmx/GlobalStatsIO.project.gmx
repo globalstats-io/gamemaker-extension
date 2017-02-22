@@ -35,6 +35,7 @@
       <sprite>sprites\sprClickme</sprite>
       <sprite>sprites\sprTextBox</sprite>
       <sprite>sprites\sprButton</sprite>
+      <sprite>sprites\sprLongButton</sprite>
     </sprites>
   </sprites>
   <backgrounds name="background"/>
@@ -45,6 +46,7 @@
         <script>scripts\setPlayerNickname.gml</script>
         <script>scripts\sendHighscore.gml</script>
         <script>scripts\getRank.gml</script>
+        <script>scripts\getRankSection.gml</script>
         <script>scripts\getHighscoreList.gml</script>
         <script>scripts\linkAccount.gml</script>
       </scripts>
@@ -65,6 +67,7 @@
         <script>scripts\gs_getResultID.gml</script>
         <script>scripts\gs_getResultStatus.gml</script>
         <script>scripts\gs_getRank.gml</script>
+        <script>scripts\gs_getRankSection.gml</script>
         <script>scripts\gs_getGTDList.gml</script>
         <script>scripts\gs_linkAccount.gml</script>
       </scripts>
@@ -83,11 +86,14 @@
       <object>objects\oStartController</object>
       <object>objects\oGameController</object>
       <object>objects\oScoresController</object>
+      <object>objects\oSectionScoresController</object>
       <object>objects\oTextBox</object>
       <object>objects\oSimpleTextButton</object>
       <object>objects\oPlayButton</object>
       <object>objects\oQuitButton</object>
       <object>objects\oBackButton</object>
+      <object>objects\oScoresButton</object>
+      <object>objects\oSectionButton</object>
       <object>objects\oLinkButton</object>
     </objects>
     <objects name="GlobalStatsIO">
@@ -100,6 +106,7 @@
       <room>rooms\roomStart</room>
       <room>rooms\roomGame</room>
       <room>rooms\roomScores</room>
+      <room>rooms\roomSectionScores</room>
     </rooms>
   </rooms>
   <help>
