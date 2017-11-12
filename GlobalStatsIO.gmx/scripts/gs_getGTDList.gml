@@ -5,6 +5,12 @@
 
 show_debug_message("gs_getGTDList: entered");
 
+if (oGlobalStatsIOController.scoresRequest != -1) {
+    // there already is a pending request so don't start another one - wait for the response first
+    show_debug_message("gs_getGTDList(): old request still pending! Exiting.");
+    return false;
+}
+
 if (oGlobalStatsIOController.gsAccessToken == noone) {
     // request a new one but that will return asynchronously so we have to return false now
     with (oGlobalStatsIOController) {
@@ -21,7 +27,7 @@ ds_map_add(jsonData, "limit", nrEntries);
 var jsonStr = json_encode(jsonData);
 show_debug_message("gs_getGTDList: jsonStr = '" + jsonStr + "'");
 
-var url = "https://api.globalstats.io/v1/gtdleaderboard/" + gtdID;
+var url = gs_getBaseURL() + "v1/gtdleaderboard/" + gtdID;
 
 var headermap = ds_map_create();
 ds_map_add(headermap, "Authorization", "Bearer " + oGlobalStatsIOController.gsAccessToken);
@@ -29,7 +35,7 @@ ds_map_add(headermap, "Content-Type", "application/json");
 ds_map_add(headermap, "Content-Length", string(string_length(jsonStr)));
 var headerstr = json_encode(headermap);
 show_debug_message(headerstr);
-oGlobalStatsIOController.scoresRequest = http_request(url, "POST", headermap, jsonStr);
+oGlobalStatsIOController.scoresRequest = httpRequest(url, "POST", headermap, jsonStr);
 
 return true;
 

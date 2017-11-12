@@ -3,7 +3,13 @@
 /// @param email optional if link instructions should be sent to given email adress
 
 
-show_debug_message("gs_linkAccount: entered");
+show_debug_message("gs_linkAccount(): entered");
+
+if (oGlobalStatsIOController.linkRequest != -1) {
+    // there already is a pending request so don't start another one - wait for the response first
+    show_debug_message("gs_linkAccount(): old request still pending! Exiting.");
+    return false;
+}
 
 if (oGlobalStatsIOController.gsAccessToken == noone) {
     // request a new one but that will return asynchronously so we have to return false now
@@ -37,7 +43,7 @@ if (email != noone) {
     show_debug_message("gs_linkAccount: jsonStr = '" + jsonStr + "'");
 }
 
-var url = "https://api.globalstats.io/v1/statisticlinks/" + gsid + "/request";
+var url = gs_getBaseURL() + "v1/statisticlinks/" + gsid + "/request";
 
 var headermap = ds_map_create();
 ds_map_add(headermap, "Authorization", "Bearer " + oGlobalStatsIOController.gsAccessToken);
@@ -46,7 +52,7 @@ if (email != noone)
     ds_map_add(headermap, "Content-Length", string(string_length(jsonStr)));
 var headerstr = json_encode(headermap);
 show_debug_message(headerstr);
-oGlobalStatsIOController.linkRequest = http_request(url, "POST", headermap, jsonStr);
+oGlobalStatsIOController.linkRequest = httpRequest(url, "POST", headermap, jsonStr);
 
 return true;
 

@@ -4,6 +4,12 @@
 
 show_debug_message("gs_getRankSection: entered");
 
+if (oGlobalStatsIOController.rankSectionRequest != -1) {
+    // there already is a pending request so don't start another one - wait for the response first
+    show_debug_message("gs_getRankSection(): old request still pending! Exiting.");
+    return false;
+}
+
 if (oGlobalStatsIOController.gsAccessToken == noone) {
     // request a new one but that will return asynchronously so we have to return false now
     with (oGlobalStatsIOController) {
@@ -25,14 +31,14 @@ if (gsid == noone) {
     return false;
 }
 
-var url = "https://api.globalstats.io/v1/statistics/" + gsid + "/section/" +gtdID;
+var url = gs_getBaseURL() + "v1/statistics/" + gsid + "/section/" +gtdID;
 
 var headermap = ds_map_create();
 ds_map_add(headermap, "Authorization", "Bearer " + oGlobalStatsIOController.gsAccessToken);
 ds_map_add(headermap, "Content-Type", "application/json");
 var headerstr = json_encode(headermap);
 show_debug_message(headerstr);
-oGlobalStatsIOController.rankSectionRequest = http_request(url, "GET", headermap, "");
+oGlobalStatsIOController.rankSectionRequest = httpRequest(url, "GET", headermap, "");
 
 return true;
 

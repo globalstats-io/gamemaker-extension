@@ -32,6 +32,9 @@ if (singleton()) {exit;}
 // initialize enums for the rank and highscores array
 enum RankResult { Name = 0, Value = 1, Sorting = 2, Rank = 3, UpdatedAt = 4, UserProfileURL = 5, UserIconURL = 6, Key = 7};
 
+// enum for achievement lists
+enum AchievementResult { Key = 0, Name = 1, Description = 2, ImageActiveURL = 3, ImageInactiveURL = 4, Accomplished = 5};
+
 
 // initialize properly with your globalstats.io auto_generated game id and secret
 gameID = "Nb9jbGnvyg0W973Rc20kczKZ3Le5JUGx6PQhweN5";
@@ -60,6 +63,9 @@ rankSectionRequest = -1;// request the current rank of current player and the cl
 scoresRequest = -1;// request a given number of highscores
 shareFirstTimeRequest = -1;// share a score for the first time, get a player id back!
 linkRequest = -1;// connect your local player account with a globalstats.io account
+allAchievementsRequest = -1;    // request a list of all achievements of this game
+playerAchievementsRequest = -1; // request a list of all achievements where each entry is flagged if the player accomplished the achievement
+accomplishAchievementRequest = -1;  // mark an achievement as accomplished
 
 
 // status variables
@@ -87,6 +93,22 @@ gsHighscoresSize = 0;   // nr of entries in the highscore array
 // response for link account request will be stored here
 gsLinkAccountURL = noone;
 gsLinkAccountPIN = noone;
+
+// some more arrays for achievements
+gsAllAchievements = 0;      // an array of all achievements which are available in this game
+gsAllAchievementsSize = 0;
+gsPlayerAchievements = 0;   // an array of the achievements the player already received
+gsPlayerAchievementsSize = 0;
+gsLatestAchievements = 0;      // an array containing the latest achievements, obtained by the last GTD update
+gsLatestAchievementsSize = 0;   // nr of above array
+gsAchievementSprites = 0;       // a ds_map containing the url of an achievement sprite as key and the sprite from the loaded image as value
+gsAchievementSprites = ds_map_create();
+gsPendingAchievementSprites = ds_map_create();  // a ds_map for pending sprites. This means they are requested to be loaded but not yet there
+gsAccomplishedAchievement = 0;  // an array containing the elements of the manually accomplished achievement
+
+// callback scripts
+gsErrorCallback = noone;
+gsAccomplishedCallback = noone;
 
 
 // insanity check
@@ -180,7 +202,9 @@ if (os_is_paused() &amp;&amp; settingsChanged) {
             <string>/// @description all HTTP responses will land here and need to be treated
 
 var result = gs_getResultID();
-var retval, expiresin, valueslist, i, entries;
+var retval, expiresin, valueslist, achievementlist, i, entries;
+
+show_debug_message("oGlobalStatsIOController.http_event: response received, request id was " + string(result));
 
 if (result == accessRequest) {
     gsConnected = false;
@@ -217,6 +241,22 @@ if (result == accessRequest) {
         gsLastGTDRank[RankResult.Sorting] = ds_map_find_value(map, "sorting");
         gsLastGTDRank[RankResult.Rank] = ds_map_find_value(map, "rank");
         gsLastGTDRank[RankResult.UpdatedAt] = ds_map_find_value(map, "updated_at");
+        // retrieve list of achievements that might have been fulfilled with the update of this GTD
+        achievementlist = ds_map_find_value(gsResponseMap, "achievements");
+        entries = ds_list_size(achievementlist);
+        gsLatestAchievementsSize = entries;
+        for (i = 0; i &lt; entries; i++) {
+            var entrymap = ds_list_find_value(achievementlist, i);
+            gsLatestAchievements[i, AchievementResult.Key] = ds_map_find_value(entrymap, "key");
+            gsLatestAchievements[i, AchievementResult.Name] = ds_map_find_value(entrymap, "name");
+            gsLatestAchievements[i, AchievementResult.Description] = ds_map_find_value(entrymap, "description");
+            gsLatestAchievements[i, AchievementResult.ImageActiveURL] = ds_map_find_value(entrymap, "image_active");
+            gsLatestAchievements[i, AchievementResult.ImageInactiveURL] = ds_map_find_value(entrymap, "image_inactive");
+        }
+        if (entries &gt; 0) {
+            if (gsAccomplishedCallback != noone)
+                script_execute(gsAccomplishedCallback, gsLatestAchievements, gsLatestAchievementsSize);
+        }
     }
     shareFirstTimeRequest = -1;
 } else if (result == shareRequest) {
@@ -232,6 +272,22 @@ if (result == accessRequest) {
         gsLastGTDRank[RankResult.Sorting] = ds_map_find_value(map, "sorting");
         gsLastGTDRank[RankResult.Rank] = ds_map_find_value(map, "rank");
         gsLastGTDRank[RankResult.UpdatedAt] = ds_map_find_value(map, "updated_at");
+        // retrieve list of achievements that might have been fulfilled with the update of this GTD
+        achievementlist = ds_map_find_value(gsResponseMap, "achievements");
+        entries = ds_list_size(achievementlist);
+        gsLatestAchievementsSize = entries;
+        for (i = 0; i &lt; entries; i++) {
+            var entrymap = ds_list_find_value(achievementlist, i);
+            gsLatestAchievements[i, AchievementResult.Key] = ds_map_find_value(entrymap, "key");
+            gsLatestAchievements[i, AchievementResult.Name] = ds_map_find_value(entrymap, "name");
+            gsLatestAchievements[i, AchievementResult.Description] = ds_map_find_value(entrymap, "description");
+            gsLatestAchievements[i, AchievementResult.ImageActiveURL] = ds_map_find_value(entrymap, "image_active");
+            gsLatestAchievements[i, AchievementResult.ImageInactiveURL] = ds_map_find_value(entrymap, "image_inactive");
+        }
+        if (entries &gt; 0) {
+            if (gsAccomplishedCallback != noone)
+                script_execute(gsAccomplishedCallback, gsLatestAchievements, gsLatestAchievementsSize);
+        }
     }
     shareRequest = -1;
 } else if (result == rankRequest) {
@@ -323,12 +379,120 @@ if (result == accessRequest) {
         gsLinkAccountPIN = ds_map_find_value(gsResponseMap, "pin");
     }
     linkRequest = -1;
+} else if (result == allAchievementsRequest) {
+    if (gs_getResultStatus()) {
+        // request successful.
+        // retrieve list of all available achievements in the game
+        valueslist = ds_map_find_value(gsResponseMap, "achievements");
+        // this is the list with all possible achievements
+        // store it in the gsAllAchievements array
+        gsAllAchievements = 0;
+        entries = ds_list_size(valueslist);
+        gsAllAchievementsSize = entries;
+        for (i = 0; i &lt; entries; i++) {
+            var map = ds_list_find_value(valueslist, i);
+            gsAllAchievements[i, AchievementResult.Key] = ds_map_find_value(map, "key");
+            gsAllAchievements[i, AchievementResult.Name] = ds_map_find_value(map, "name");
+            gsAllAchievements[i, AchievementResult.Description] = ds_map_find_value(map, "description");
+            gsAllAchievements[i, AchievementResult.ImageActiveURL] = ds_map_find_value(map, "image_active");
+            gsAllAchievements[i, AchievementResult.ImageInactiveURL] = ds_map_find_value(map, "image_inactive");
+        }
+    }
+    allAchievementsRequest = -1;
+} else if (result == playerAchievementsRequest) {
+    if (gs_getResultStatus()) {
+        // request successful.
+        // retrieve list of player achievements in the game, is basically a list of all achievements with
+        // additional information for each achievement if it has been accomplished by the given player or not
+        valueslist = ds_map_find_value(gsResponseMap, "achievements");
+        // this is the list with all possible achievements
+        // store it in the gsAllAchievements array
+        gsPlayerAchievements = 0;
+        entries = ds_list_size(valueslist);
+        gsPlayerAchievementsSize = entries;
+        for (i = 0; i &lt; entries; i++) {
+            var map = ds_list_find_value(valueslist, i);
+            gsPlayerAchievements[i, AchievementResult.Key] = ds_map_find_value(map, "key");
+            gsPlayerAchievements[i, AchievementResult.Name] = ds_map_find_value(map, "name");
+            gsPlayerAchievements[i, AchievementResult.Description] = ds_map_find_value(map, "description");
+            gsPlayerAchievements[i, AchievementResult.ImageActiveURL] = ds_map_find_value(map, "image_active");
+            gsPlayerAchievements[i, AchievementResult.ImageInactiveURL] = ds_map_find_value(map, "image_inactive");
+            gsPlayerAchievements[i, AchievementResult.Accomplished] = ds_map_find_value(map, "accomplished");
+        }
+    }
+    playerAchievementsRequest = -1;
+} else if (result == accomplishAchievementRequest) {
+    if (gs_getResultStatus()) {
+        // request successful.
+        // retrieve accomplished achievement
+        var map = ds_map_find_value(gsResponseMap, "achievement");
+        // this is the accomplished achievement
+        // store it in the gsAllAchievements array
+        gsAccomplishedAchievement = 0;
+        gsAccomplishedAchievement[AchievementResult.Key] = ds_map_find_value(map, "key");
+        gsAccomplishedAchievement[AchievementResult.Name] = ds_map_find_value(map, "name");
+        gsAccomplishedAchievement[AchievementResult.Description] = ds_map_find_value(map, "description");
+        gsAccomplishedAchievement[AchievementResult.ImageActiveURL] = ds_map_find_value(map, "image_active");
+        gsAccomplishedAchievement[AchievementResult.ImageInactiveURL] = ds_map_find_value(map, "image_inactive");
+    }
+    accomplishAchievementRequest = -1;
 } else {
-    show_debug_message("oGlobalStatsIOController Async HTTP: unexpected response received...");
+    show_debug_message("oGlobalStatsIOController Async HTTP: unexpected response received, could be an image load request...");
 }
 if (gsResponseMap != noone) {
     ds_map_destroy(gsResponseMap);
     gsResponseMap = noone;
+}
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="7" enumb="60">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// callback when an achievement image is loaded from globalstats.io
+show_debug_message("Async event Image Loaded received");
+
+var spr = gs_getResultID();
+var url = ds_map_find_value(async_load, "filename");
+var status = ds_map_find_value(async_load, "status");
+if (status &gt;= 0) {
+    var pendingspr = ds_map_find_value(oGlobalStatsIOController.gsPendingAchievementSprites, url);
+    if (is_undefined(pendingspr)) {
+        // this should never happen!
+        show_debug_message("received a response for sprite url '" + url + "' which was never requested!");
+        exit;
+    } else {
+        if (spr != pendingspr) {
+            // this should also never happen!
+            show_debug_message("Pending and received sprite ids for url '" + url + "' don't match!");
+            exit;
+        } else {
+            // okay, sprite successfully loaded. Add it to the proper ds_map
+            ds_map_add(oGlobalStatsIOController.gsAchievementSprites, url, spr);
+            // and delete it from the pending map
+            ds_map_delete(oGlobalStatsIOController.gsPendingAchievementSprites, url);
+        }
+    }
+} else {
+    // an error occurred on loading the image
+    show_debug_message("Error loading sprite for url '" + url + "'!");
 }
 
 </string>

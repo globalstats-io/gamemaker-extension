@@ -74,9 +74,10 @@ instance_destroy();
             <kind>1</kind>
             <string>if (!global.GameOver) {
     global.CurrentScore += 10;
+    audio_play_sound(sndClicked, 1, false);
+    instance_destroy();
 }
-audio_play_sound(sndClicked, 1, false);
-instance_destroy();
+
 </string>
           </argument>
         </arguments>

@@ -29,6 +29,7 @@
 
 deleteTimer = 2;
 text = "";
+keyboard_string = "";
 TEXT_MAX_LENGTH = 20;
 </string>
           </argument>

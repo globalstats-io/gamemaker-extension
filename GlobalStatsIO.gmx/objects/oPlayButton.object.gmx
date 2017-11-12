@@ -58,6 +58,11 @@ gs_setSetting("currentPlayer", global.CurrentPlayer);
 // also tell the globalstats.io Interface
 setPlayerNickname(global.CurrentPlayer);
 
+// check for first play
+if (is_undefined(gs_getSetting(global.CurrentPlayer))) {
+    // no player id yet so this is the first play of this player. Remember that
+    global.FirstPlay = true;
+}
 room_goto(roomGame);
 </string>
           </argument>

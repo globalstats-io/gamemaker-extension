@@ -37,6 +37,40 @@ alarm[1] = room_speed * 2;  // request highscores in two seconds
 oGlobalStatsIOController.gsLinkAccountURL = noone;
 alarm[2] = room_speed * 3;  // request link url in three seconds
 linkButtonCreated = false;
+
+if (global.FirstPlay)
+    alarm[3] = room_speed * 2;  // accomplish first play achievement in 2 seconds.
+    // Check that player id is valid now. No achievements without valid player id!!!
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="2" enumb="3">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// accomplish first play achievement
+if (global.FirstPlay &amp;&amp; !is_undefined(gs_getSetting(global.CurrentPlayer))) {
+    accomplishAchievement("firstTime");
+    global.FirstPlay = false;
+} else if (global.FirstPlay &amp;&amp; is_undefined(gs_getSetting(global.CurrentPlayer))) {
+    alarm[3] = room_speed;  // check once more in a second
+}
 </string>
           </argument>
         </arguments>

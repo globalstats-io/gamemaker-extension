@@ -51,11 +51,11 @@
     <view visible="0" objName="&lt;undefined&gt;" xview="0" yview="0" wview="1024" hview="768" xport="0" yport="0" wport="1024" hport="768" hborder="32" vborder="32" hspeed="-1" vspeed="-1"/>
   </views>
   <instances>
-    <instance objName="oTextBox" x="512" y="384" name="PlayerNameInputBox" locked="0" code="" scaleX="1.125" scaleY="1.5" colour="4294967295" rotation="0"/>
-    <instance objName="oStartController" x="0" y="0" name="inst_251383F4" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
-    <instance objName="oPlayButton" x="512" y="608" name="inst_2CA73AB3" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
-    <instance objName="oQuitButton" x="512" y="704" name="inst_64E500DF" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
-    <instance objName="oAchievementsButton" x="768" y="608" name="inst_CB959722" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
+    <instance objName="oBackButton" x="512" y="704" name="inst_AB4DFFD5" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
+    <instance objName="oAchievementsController" x="0" y="0" name="inst_0E03260C" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
+    <instance objName="oAllAchievementsButton" x="256" y="640" name="inst_6D2447A8" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
+    <instance objName="oPlayerAchievementsButton" x="768" y="640" name="inst_4BEDAB21" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
+    <instance objName="oAccomplishAchievementButton" x="256" y="704" name="inst_AE1A4EEA" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
   </instances>
   <tiles/>
   <PhysicsWorld>0</PhysicsWorld>

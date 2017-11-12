@@ -3,7 +3,24 @@
   <Configs name="configs">
     <Config>Configs\Default</Config>
   </Configs>
-  <datafiles number="1" name="datafiles">
+  <datafiles number="2" name="datafiles">
+    <datafile>
+      <name>HttpRequester.gmez</name>
+      <exists>-1</exists>
+      <size>42094</size>
+      <exportAction>2</exportAction>
+      <exportDir></exportDir>
+      <overwrite>0</overwrite>
+      <freeData>-1</freeData>
+      <removeEnd>0</removeEnd>
+      <store>0</store>
+      <ConfigOptions>
+        <Config name="Default">
+          <CopyToMask>9223372036854775807</CopyToMask>
+        </Config>
+      </ConfigOptions>
+      <filename>HttpRequester.gmez</filename>
+    </datafile>
     <datafile>
       <name>readme.txt</name>
       <exists>-1</exists>
@@ -45,10 +62,16 @@
       <scripts name="Public">
         <script>scripts\setPlayerNickname.gml</script>
         <script>scripts\sendHighscore.gml</script>
+        <script>scripts\sendGTDValue.gml</script>
         <script>scripts\getRank.gml</script>
         <script>scripts\getRankSection.gml</script>
         <script>scripts\getHighscoreList.gml</script>
         <script>scripts\linkAccount.gml</script>
+        <script>scripts\getAllAchievements.gml</script>
+        <script>scripts\getPlayerAchievements.gml</script>
+        <script>scripts\getAchievementSprite.gml</script>
+        <script>scripts\accomplishAchievement.gml</script>
+        <script>scripts\setCallbackScripts.gml</script>
       </scripts>
       <scripts name="Settings">
         <script>scripts\gs_loadSettings.gml</script>
@@ -69,8 +92,17 @@
         <script>scripts\gs_getRank.gml</script>
         <script>scripts\gs_getRankSection.gml</script>
         <script>scripts\gs_getGTDList.gml</script>
+        <script>scripts\gs_getPlayerAchievements.gml</script>
+        <script>scripts\gs_accomplishAchievement.gml</script>
+        <script>scripts\gs_getAllAchievements.gml</script>
         <script>scripts\gs_linkAccount.gml</script>
+        <script>scripts\gs_getBaseURL.gml</script>
+        <script>scripts\httpRequest.gml</script>
       </scripts>
+    </scripts>
+    <scripts name="Demo">
+      <script>scripts\demoErrorResponseCallback.gml</script>
+      <script>scripts\demoAchievementsAccomplishedCallback.gml</script>
     </scripts>
   </scripts>
   <fonts name="fonts">
@@ -86,6 +118,7 @@
       <object>objects\oStartController</object>
       <object>objects\oGameController</object>
       <object>objects\oScoresController</object>
+      <object>objects\oAchievementsController</object>
       <object>objects\oSectionScoresController</object>
       <object>objects\oTextBox</object>
       <object>objects\oSimpleTextButton</object>
@@ -93,6 +126,10 @@
       <object>objects\oQuitButton</object>
       <object>objects\oBackButton</object>
       <object>objects\oScoresButton</object>
+      <object>objects\oAchievementsButton</object>
+      <object>objects\oAllAchievementsButton</object>
+      <object>objects\oPlayerAchievementsButton</object>
+      <object>objects\oAccomplishAchievementButton</object>
       <object>objects\oSectionButton</object>
       <object>objects\oLinkButton</object>
     </objects>
@@ -106,6 +143,7 @@
       <room>rooms\roomStart</room>
       <room>rooms\roomGame</room>
       <room>rooms\roomScores</room>
+      <room>rooms\roomAchievements</room>
       <room>rooms\roomSectionScores</room>
     </rooms>
   </rooms>
